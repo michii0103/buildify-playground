@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    container_name: dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app            # Synchronisiert den lokalen Code in den Container
+      - /app/node_modules # Ignoriert node_modules
+    command: npm run dev

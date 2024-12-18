@@ -1,0 +1,36 @@
+{
+    "name": "full-stack",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "",
+    "scripts": {
+        "build": "vite build && tsc",
+        "watch:client": "vite",
+        "watch:server": "npx tsx watch src/server/server.ts",
+        "start": "npm run build && concurrently -k \"npm:watch:client\" \"npm:watch:server\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.21.2",
+        "lit": "^3.2.1",
+        "nvm": "^0.0.4",
+        "ts-node": "^10.9.2",
+        "ws": "^8.18.0"
+    },
+    "devDependencies": {
+        "@rollup/plugin-replace": "^6.0.1",
+        "@types/express": "^5.0.0",
+        "@types/node": "^22.10.2",
+        "@types/ws": "^8.5.13",
+        "concurrently": "^9.1.0",
+        "nodemon": "^3.1.9",
+        "ts-node-dev": "^2.0.0",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.2",
+        "vite": "^6.0.3",
+        "vite-plugin-full-reload": "^1.2.0",
+        "vite-plugin-web-components-hmr": "^0.1.3"
+    }
+}

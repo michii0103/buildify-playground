@@ -1,0 +1,67 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch: # Manuelles Starten aktivieren
+    inputs:
+      deploy_on_server:
+        description: "Production Deployment"
+        required: true
+        default: "false"
+
+jobs:
+  # Job 1: Image Check
+  image_check:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+
+  # Job 2: Production Deployment
+  deploy_production:
+    needs: image_check # Führt Deploy nur aus, wenn der Image Check erfolgreich war
+    runs-on: ubuntu-24.04
+    environment:
+      name: production # GitHub Environments mit Schutzregeln
+      url: https://codelabspace.de
+    steps:
+      - name: Deploy to Server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          # Extrahiere den Repository-Namen
+          PROJECT_NAME=$(basename ${{ github.repository }})
+          echo "PROJECT_NAME: $PROJECT_NAME"
+
+          # SSH Setup
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan 45.129.183.223 >> ~/.ssh/known_hosts
+
+          # Clean and create project directory dynamically
+          ssh -i ~/.ssh/id_ed25519 root@45.129.183.223 "
+            rm -rf /root/$PROJECT_NAME &&
+            mkdir -p /root/$PROJECT_NAME
+          "
+
+          # Pull latest code and start dynamically
+          ssh -i ~/.ssh/id_ed25519 root@45.129.183.223 "
+            cd /root/$PROJECT_NAME &&
+            git clone https://github.com/${{ github.repository }}.git . &&
+            npm install &&
+            npm run build &&
+            pm2 start ecosystem.config.cjs --env production
+          "
