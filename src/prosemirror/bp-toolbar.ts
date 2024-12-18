@@ -10,7 +10,6 @@ export class BPToolbar extends LitElement {
     .toolbar {
       display: flex;
       gap: 8px;
-      margin-bottom: 8px;
     }
     button {
       padding: 4px 8px;
@@ -36,9 +35,11 @@ export class BPToolbar extends LitElement {
           (item) => item.label,
           (item) => {
             const isActive = item.isActive?.(this.view);
+            console.log("isActive: ", isActive);
+            const style = isActive ? "background: #4b6584; color: #fff;" : "";
             return html`
               <button
-                style=${`border: ${isActive ? "2px solid #333" : ""}`}
+                style=${style}
                 @click=${() => {
                   if (!item.run) return;
                   item.run(this.view);

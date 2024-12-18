@@ -16,6 +16,7 @@ import { keymap } from "prosemirror-keymap";
 import { baseKeymap } from "prosemirror-commands";
 import { editorUpdatedCallbackPlugin } from "./plugins/editorUpdatedCallbackPlugin";
 import { BPToolbar } from "./bp-toolbar";
+import { floatingToolbarPlugin } from "./plugins/floatingToolbarPlugin";
 
 @customElement("bp-prosemirror")
 export class BPProsemirror extends LitElement {
@@ -44,6 +45,7 @@ export class BPProsemirror extends LitElement {
     // add default plugins
     plugins.push(history());
     plugins.push(keymap(baseKeymap));
+    plugins.push(floatingToolbarPlugin(this.getMenuItems()));
     plugins.push(
       editorUpdatedCallbackPlugin(() => {
         const toolbar = this.renderRoot.querySelector("#toolbar") as BPToolbar;
@@ -122,14 +124,17 @@ export class BPProsemirror extends LitElement {
 
   static styles = css`
     :host {
+      position: relative;
       display: block;
+    }
+    #editor {
+      position: relative;
     }
     .ProseMirror {
       border: 1px solid #ccc;
       padding: 8px;
       min-height: 150px;
     }
-
     .ProseMirror:focus {
       outline: none;
     }
