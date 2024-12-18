@@ -1,6 +1,8 @@
-import { LitElement, html, css } from "lit";
+import { LitElement, html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { MenuItem } from "./editorConfig";
+import { IMenuItem } from "./types";
+import { EditorView } from "prosemirror-view";
+import { repeat } from "lit/directives/repeat.js";
 
 @customElement("bp-toolbar")
 export class BPToolbar extends LitElement {
@@ -21,21 +23,31 @@ export class BPToolbar extends LitElement {
     }
   `;
 
-  @property({ type: Array }) buttons: MenuItem[] = [];
+  @property({ attribute: false }) menuItems: IMenuItem[] = [];
+  @property({ attribute: false }) view: EditorView;
 
   render() {
+    if (!this.view) return nothing;
+
     return html`
       <div class="toolbar">
-        ${this.buttons.map(
-          (btn) =>
-            html`<button
-              @click=${() =>
-                this.dispatchEvent(
-                  new CustomEvent("action", { detail: { action: btn.action } })
-                )}
-            >
-              ${btn.label}
-            </button>`
+        ${repeat(
+          this.menuItems,
+          (item) => item.label,
+          (item) => {
+            const isActive = item.isActive?.(this.view);
+            return html`
+              <button
+                style=${`border: ${isActive ? "2px solid #333" : ""}`}
+                @click=${() => {
+                  if (!item.run) return;
+                  item.run(this.view);
+                }}
+              >
+                ${item.label}
+              </button>
+            `;
+          }
         )}
       </div>
     `;

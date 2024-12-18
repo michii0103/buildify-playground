@@ -21,7 +21,7 @@ export class MainElement extends LitElement {
   render() {
     return html`
       <p>Editor:</p>
-      <pb-prosemirror></pb-prosemirror>
+      <bp-prosemirror></bp-prosemirror>
     `;
   }
 }
