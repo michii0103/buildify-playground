@@ -1,5 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import "../prosemirror/bp-prosemirror";
 
 @customElement("main-element")
 export class MainElement extends LitElement {
@@ -18,6 +19,9 @@ export class MainElement extends LitElement {
   `;
 
   render() {
-    return html` Space for future projects... `;
+    return html`
+      <p>Editor:</p>
+      <pb-prosemirror></pb-prosemirror>
+    `;
   }
 }
